@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import StatCard from '@/components/dashboard/StatCard';
@@ -15,10 +14,10 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const DoctorDashboard: React.FC = () => {
+function DoctorDashboard() {
   const { user } = useAuth();
 
-  // Mock data for doctor dashboard
+  // mock stats data
   const stats = [
     { title: 'Total Patients', value: 248, icon: Users, trend: { value: 12, isPositive: true } },
     { title: 'Appointments Today', value: 8, icon: Calendar },
@@ -26,19 +25,30 @@ const DoctorDashboard: React.FC = () => {
     { title: 'Prescriptions', value: 42, icon: Pill },
   ];
 
-  const todayAppointments = [
-    { patientName: 'Sarah Johnson', time: '09:00 AM', date: 'Today', type: 'in-person' as const, status: 'upcoming' as const },
-    { patientName: 'Michael Chen', time: '10:30 AM', date: 'Today', type: 'video' as const, status: 'upcoming' as const },
-    { patientName: 'Emma Williams', time: '11:45 AM', date: 'Today', type: 'in-person' as const, status: 'upcoming' as const },
-    { patientName: 'James Brown', time: '02:00 PM', date: 'Today', type: 'video' as const, status: 'upcoming' as const },
+  // mock appointments data
+  const todayAppointments: Array<{patientName: string; time: string; date: string; type: 'in-person' | 'video'; status: 'upcoming' | 'completed' | 'cancelled'}> = [
+    { patientName: 'Sarah Johnson', time: '09:00 AM', date: 'Today', type: 'in-person', status: 'upcoming' },
+    { patientName: 'Michael Chen', time: '10:30 AM', date: 'Today', type: 'video', status: 'upcoming' },
+    { patientName: 'Emma Williams', time: '11:45 AM', date: 'Today', type: 'in-person', status: 'upcoming' },
+    { patientName: 'James Brown', time: '02:00 PM', date: 'Today', type: 'video', status: 'upcoming' },
   ];
 
+  // mock patients data
   const recentPatients = [
     { name: 'Sarah Johnson', age: 34, phone: '+1 234 567 8901', lastVisit: 'Jan 15, 2026', condition: 'Hypertension' },
     { name: 'Michael Chen', age: 45, phone: '+1 234 567 8902', lastVisit: 'Jan 14, 2026', condition: 'Diabetes Type 2' },
     { name: 'Emma Williams', age: 28, phone: '+1 234 567 8903', lastVisit: 'Jan 12, 2026', condition: 'Allergies' },
   ];
 
+  // quick actions
+  const quickActions = [
+    { icon: FileText, label: 'Write Prescription', color: 'bg-primary/10' },
+    { icon: Users, label: 'View All Patients', color: 'bg-secondary' },
+    { icon: Calendar, label: 'Schedule Appointment', color: 'bg-secondary' },
+    { icon: Activity, label: 'View Reports', color: 'bg-secondary' },
+  ];
+
+  // animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -46,6 +56,9 @@ const DoctorDashboard: React.FC = () => {
       transition: { staggerChildren: 0.1 },
     },
   };
+
+  // get first name from full name
+  const firstName = user?.fullName?.split(' ')[0] || 'Doctor';
 
   return (
     <div className="min-h-screen bg-background">
@@ -57,7 +70,7 @@ const DoctorDashboard: React.FC = () => {
           className="mb-8"
         >
           <h1 className="text-3xl font-bold mb-2">
-            Good morning, Dr. {user?.fullName?.split(' ')[0]}! 👋
+            Good morning, Dr. {firstName}! 👋
           </h1>
           <p className="text-muted-foreground">
             Here's an overview of your practice today
@@ -71,9 +84,11 @@ const DoctorDashboard: React.FC = () => {
           animate="visible"
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
         >
-          {stats.map((stat, i) => (
-            <StatCard key={stat.title} {...stat} delay={i * 0.1} />
-          ))}
+          {stats.map(function(stat, i) {
+            return (
+              <StatCard key={stat.title} {...stat} delay={i * 0.1} />
+            );
+          })}
         </motion.div>
 
         {/* Main Content Grid */}
@@ -93,9 +108,11 @@ const DoctorDashboard: React.FC = () => {
               </Button>
             </div>
             <div className="space-y-3">
-              {todayAppointments.map((apt, i) => (
-                <AppointmentCard key={i} {...apt} delay={0.5 + i * 0.1} />
-              ))}
+              {todayAppointments.map(function(apt, i) {
+                return (
+                  <AppointmentCard key={i} {...apt} delay={0.5 + i * 0.1} />
+                );
+              })}
             </div>
           </motion.div>
 
@@ -107,24 +124,22 @@ const DoctorDashboard: React.FC = () => {
           >
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
             <div className="space-y-3">
-              {[
-                { icon: FileText, label: 'Write Prescription', color: 'bg-primary/10' },
-                { icon: Users, label: 'View All Patients', color: 'bg-secondary' },
-                { icon: Calendar, label: 'Schedule Appointment', color: 'bg-secondary' },
-                { icon: Activity, label: 'View Reports', color: 'bg-secondary' },
-              ].map((action, i) => (
-                <motion.button
-                  key={action.label}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.6 + i * 0.1 }}
-                  whileHover={{ scale: 1.02, x: 4 }}
-                  className={`w-full flex items-center gap-3 p-4 ${action.color} rounded-xl border border-border hover:shadow-subtle transition-all`}
-                >
-                  <action.icon className="h-5 w-5" />
-                  <span className="font-medium">{action.label}</span>
-                </motion.button>
-              ))}
+              {quickActions.map(function(action, i) {
+                const IconComponent = action.icon;
+                return (
+                  <motion.button
+                    key={action.label}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.6 + i * 0.1 }}
+                    whileHover={{ scale: 1.02, x: 4 }}
+                    className={`w-full flex items-center gap-3 p-4 ${action.color} rounded-xl border border-border hover:shadow-subtle transition-all`}
+                  >
+                    <IconComponent className="h-5 w-5" />
+                    <span className="font-medium">{action.label}</span>
+                  </motion.button>
+                );
+              })}
             </div>
           </motion.div>
         </div>
@@ -143,14 +158,16 @@ const DoctorDashboard: React.FC = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {recentPatients.map((patient, i) => (
-              <PatientCard key={i} {...patient} delay={0.8 + i * 0.1} />
-            ))}
+            {recentPatients.map(function(patient, i) {
+              return (
+                <PatientCard key={i} {...patient} delay={0.8 + i * 0.1} />
+              );
+            })}
           </div>
         </motion.div>
       </div>
     </div>
   );
-};
+}
 
 export default DoctorDashboard;

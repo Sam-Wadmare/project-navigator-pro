@@ -1,40 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthForm from '@/components/AuthForm';
-import { getRedirectPath, UserRole } from '@/lib/auth';
+import { getRedirectPath } from '@/lib/auth';
 import { Check } from 'lucide-react';
 
-const Signup: React.FC = () => {
+function Signup() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { signup, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  // redirect if already logged in
+  useEffect(function() {
     if (isAuthenticated && user) {
       navigate(getRedirectPath(user.role));
     }
   }, [isAuthenticated, user, navigate]);
 
-  const handleSubmit = async (data: {
-    fullName?: string;
-    email: string;
-    password: string;
-    role?: UserRole;
-  }) => {
+  // handle form submit
+  async function handleSubmit(data) {
     setError('');
     setIsLoading(true);
 
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // simulate network delay
+    await new Promise(function(resolve) {
+      setTimeout(resolve, 800);
+    });
 
     const result = signup(
-      data.fullName!,
+      data.fullName,
       data.email,
       data.password,
-      data.role!
+      data.role
     );
     setIsLoading(false);
 
@@ -46,8 +45,9 @@ const Signup: React.FC = () => {
     if (result.user) {
       navigate(getRedirectPath(result.user.role));
     }
-  };
+  }
 
+  // features list
   const features = [
     'Role-based access control',
     'Secure patient data management',
@@ -71,7 +71,7 @@ const Signup: React.FC = () => {
             transition={{ delay: 0.2 }}
             className="mb-8"
           >
-            <h2 className="text-5xl font-bold mb-4">SOOO CURA</h2>
+            <h2 className="text-5xl font-bold mb-4">CURADOCS</h2>
             <div className="w-24 h-1 bg-primary-foreground/30 rounded-full" />
           </motion.div>
           <motion.p
@@ -88,20 +88,22 @@ const Signup: React.FC = () => {
             transition={{ delay: 0.4 }}
             className="space-y-4"
           >
-            {features.map((feature, i) => (
-              <motion.li
-                key={i}
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.5 + i * 0.1 }}
-                className="flex items-center gap-3"
-              >
-                <div className="flex-shrink-0 w-6 h-6 bg-primary-foreground/20 rounded-full flex items-center justify-center">
-                  <Check className="h-4 w-4" />
-                </div>
-                <span className="text-primary-foreground/90">{feature}</span>
-              </motion.li>
-            ))}
+            {features.map(function(feature, i) {
+              return (
+                <motion.li
+                  key={i}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.5 + i * 0.1 }}
+                  className="flex items-center gap-3"
+                >
+                  <div className="flex-shrink-0 w-6 h-6 bg-primary-foreground/20 rounded-full flex items-center justify-center">
+                    <Check className="h-4 w-4" />
+                  </div>
+                  <span className="text-primary-foreground/90">{feature}</span>
+                </motion.li>
+              );
+            })}
           </motion.ul>
         </motion.div>
       </div>
@@ -128,7 +130,7 @@ const Signup: React.FC = () => {
               transition={{ delay: 0.2 }}
               className="text-muted-foreground"
             >
-              Get started with SOOO CURA today
+              Get started with CURADOCS today
             </motion.p>
           </div>
 
@@ -157,6 +159,6 @@ const Signup: React.FC = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Signup;

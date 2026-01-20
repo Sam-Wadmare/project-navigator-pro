@@ -1,125 +1,118 @@
-// Authentication utility functions and types for SOOO CURA
+// auth.js - Authentication helper functions for CURADOCS
 
-export type UserRole = 'doctor' | 'patient';
+const USERS_KEY = 'curadocs_users';
+const CURRENT_USER_KEY = 'curadocs_current_user';
 
-export interface User {
-  id: string;
-  fullName: string;
-  email: string;
-  role: UserRole;
-  createdAt: string;
-}
-
-export interface AuthState {
-  user: User | null;
-  isAuthenticated: boolean;
-}
-
-const USERS_KEY = 'sooo_cura_users';
-const CURRENT_USER_KEY = 'sooo_cura_current_user';
-
-// Get all registered users from localStorage
-export const getUsers = (): User[] => {
+// get all users from localStorage
+export function getUsers() {
   const users = localStorage.getItem(USERS_KEY);
-  return users ? JSON.parse(users) : [];
-};
+  if (users) {
+    return JSON.parse(users);
+  }
+  return [];
+}
 
-// Save users to localStorage
-const saveUsers = (users: User[]): void => {
+// save users array to localStorage
+function saveUsers(users) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
-};
+}
 
-// Get current authenticated user
-export const getCurrentUser = (): User | null => {
+// get the currently logged in user
+export function getCurrentUser() {
   const user = localStorage.getItem(CURRENT_USER_KEY);
-  return user ? JSON.parse(user) : null;
-};
+  if (user) {
+    return JSON.parse(user);
+  }
+  return null;
+}
 
-// Set current user (login)
-const setCurrentUser = (user: User): void => {
+// set current user when logging in
+function setCurrentUser(user) {
   localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-};
+}
 
-// Clear current user (logout)
-export const clearCurrentUser = (): void => {
+// clear current user when logging out
+export function clearCurrentUser() {
   localStorage.removeItem(CURRENT_USER_KEY);
-};
+}
 
-// Generate a simple unique ID
-const generateId = (): string => {
+// generate simple unique id
+function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
-};
+}
 
-// Signup function
-export const signup = (
-  fullName: string,
-  email: string,
-  password: string,
-  role: UserRole
-): { success: boolean; message: string; user?: User } => {
+// signup function - creates new user
+export function signup(fullName, email, password, role) {
   const users = getUsers();
   
-  // Check if email already exists
-  const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  // check if email already exists
+  const existingUser = users.find(function(u) {
+    return u.email.toLowerCase() === email.toLowerCase();
+  });
+  
   if (existingUser) {
     return { success: false, message: 'An account with this email already exists' };
   }
 
-  // Create new user (password stored separately for demo)
-  const newUser: User = {
+  // create new user object
+  const newUser = {
     id: generateId(),
-    fullName,
+    fullName: fullName,
     email: email.toLowerCase(),
-    role,
+    role: role,
     createdAt: new Date().toISOString(),
   };
 
-  // Store user with password (in real app, this would be hashed on backend)
-  const usersWithPasswords = JSON.parse(localStorage.getItem(USERS_KEY + '_passwords') || '{}');
-  usersWithPasswords[newUser.id] = password;
-  localStorage.setItem(USERS_KEY + '_passwords', JSON.stringify(usersWithPasswords));
+  // store password separately (not secure but ok for demo)
+  const passwords = JSON.parse(localStorage.getItem(USERS_KEY + '_passwords') || '{}');
+  passwords[newUser.id] = password;
+  localStorage.setItem(USERS_KEY + '_passwords', JSON.stringify(passwords));
 
-  // Save user
+  // save user to users array
   users.push(newUser);
   saveUsers(users);
   setCurrentUser(newUser);
 
   return { success: true, message: 'Account created successfully', user: newUser };
-};
+}
 
-// Login function
-export const login = (
-  email: string,
-  password: string
-): { success: boolean; message: string; user?: User } => {
+// login function - authenticates user
+export function login(email, password) {
   const users = getUsers();
-  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  
+  // find user by email
+  const user = users.find(function(u) {
+    return u.email.toLowerCase() === email.toLowerCase();
+  });
 
   if (!user) {
     return { success: false, message: 'No account found with this email' };
   }
 
-  // Check password
-  const usersWithPasswords = JSON.parse(localStorage.getItem(USERS_KEY + '_passwords') || '{}');
-  if (usersWithPasswords[user.id] !== password) {
+  // check password
+  const passwords = JSON.parse(localStorage.getItem(USERS_KEY + '_passwords') || '{}');
+  if (passwords[user.id] !== password) {
     return { success: false, message: 'Incorrect password' };
   }
 
   setCurrentUser(user);
-  return { success: true, message: 'Login successful', user };
-};
+  return { success: true, message: 'Login successful', user: user };
+}
 
-// Logout function
-export const logout = (): void => {
+// logout function
+export function logout() {
   clearCurrentUser();
-};
+}
 
-// Check if user is authenticated
-export const isAuthenticated = (): boolean => {
+// check if user is logged in
+export function isAuthenticated() {
   return getCurrentUser() !== null;
-};
+}
 
-// Get redirect path based on role
-export const getRedirectPath = (role: UserRole): string => {
-  return role === 'doctor' ? '/doctor-dashboard' : '/patient-dashboard';
-};
+// get dashboard path based on user role
+export function getRedirectPath(role) {
+  if (role === 'doctor') {
+    return '/doctor-dashboard';
+  }
+  return '/patient-dashboard';
+}

@@ -1,28 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthForm from '@/components/AuthForm';
 import { getRedirectPath } from '@/lib/auth';
 
-const Login: React.FC = () => {
+function Login() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  // redirect if already logged in
+  useEffect(function() {
     if (isAuthenticated && user) {
       navigate(getRedirectPath(user.role));
     }
   }, [isAuthenticated, user, navigate]);
 
-  const handleSubmit = async (data: { email: string; password: string }) => {
+  // handle form submit
+  async function handleSubmit(data) {
     setError('');
     setIsLoading(true);
 
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // simulate network delay
+    await new Promise(function(resolve) {
+      setTimeout(resolve, 800);
+    });
 
     const result = login(data.email, data.password);
     setIsLoading(false);
@@ -35,7 +39,7 @@ const Login: React.FC = () => {
     if (result.user) {
       navigate(getRedirectPath(result.user.role));
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex">
@@ -103,7 +107,7 @@ const Login: React.FC = () => {
             transition={{ delay: 0.3 }}
             className="mb-6"
           >
-            <h2 className="text-5xl font-bold mb-4">SOOO CURA</h2>
+            <h2 className="text-5xl font-bold mb-4">CURADOCS</h2>
             <div className="w-24 h-1 bg-primary-foreground/30 mx-auto rounded-full" />
           </motion.div>
           <motion.p
@@ -120,21 +124,23 @@ const Login: React.FC = () => {
             transition={{ delay: 0.5 }}
             className="mt-12 grid grid-cols-3 gap-8 text-center"
           >
-            {[
-              { value: '10K+', label: 'Patients' },
-              { value: '500+', label: 'Doctors' },
-              { value: '50K+', label: 'Appointments' },
-            ].map((stat, i) => (
-              <div key={i}>
-                <div className="text-3xl font-bold">{stat.value}</div>
-                <div className="text-sm text-primary-foreground/60">{stat.label}</div>
-              </div>
-            ))}
+            <div>
+              <div className="text-3xl font-bold">10K+</div>
+              <div className="text-sm text-primary-foreground/60">Patients</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold">500+</div>
+              <div className="text-sm text-primary-foreground/60">Doctors</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold">50K+</div>
+              <div className="text-sm text-primary-foreground/60">Appointments</div>
+            </div>
           </motion.div>
         </motion.div>
       </div>
     </div>
   );
-};
+}
 
 export default Login;

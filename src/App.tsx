@@ -14,46 +14,48 @@ import DoctorDashboard from "./pages/DoctorDashboard";
 import PatientDashboard from "./pages/PatientDashboard";
 import NotFound from "./pages/NotFound";
 
+// create query client for data fetching
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route
-                  path="/doctor-dashboard"
-                  element={
-                    <ProtectedRoute allowedRole="doctor">
-                      <DoctorDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/patient-dashboard"
-                  element={
-                    <ProtectedRoute allowedRole="patient">
-                      <PatientDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Layout>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route
+                    path="/doctor-dashboard"
+                    element={
+                      <ProtectedRoute allowedRole="doctor">
+                        <DoctorDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/patient-dashboard"
+                    element={
+                      <ProtectedRoute allowedRole="patient">
+                        <PatientDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Layout>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

@@ -1,74 +1,72 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, getCurrentUser, logout as authLogout, login as authLogin, signup as authSignup, UserRole } from '@/lib/auth';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { getCurrentUser, logout as authLogout, login as authLogin, signup as authSignup } from '@/lib/auth';
 
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => { success: boolean; message: string; user?: User };
-  signup: (fullName: string, email: string, password: string, role: UserRole) => { success: boolean; message: string; user?: User };
-  logout: () => void;
-  refreshUser: () => void;
-}
+// create context for auth
+const AuthContext = createContext(undefined);
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+// auth provider component
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const refreshUser = () => {
+  // refresh user from localStorage
+  function refreshUser() {
     const currentUser = getCurrentUser();
     setUser(currentUser);
-  };
+  }
 
-  useEffect(() => {
+  // load user on mount
+  useEffect(function() {
     refreshUser();
     setIsLoading(false);
   }, []);
 
-  const login = (email: string, password: string) => {
+  // login function
+  function login(email, password) {
     const result = authLogin(email, password);
     if (result.success && result.user) {
       setUser(result.user);
     }
     return result;
-  };
+  }
 
-  const signup = (fullName: string, email: string, password: string, role: UserRole) => {
+  // signup function
+  function signup(fullName, email, password, role) {
     const result = authSignup(fullName, email, password, role);
     if (result.success && result.user) {
       setUser(result.user);
     }
     return result;
-  };
+  }
 
-  const logout = () => {
+  // logout function
+  function logout() {
     authLogout();
     setUser(null);
+  }
+
+  const value = {
+    user: user,
+    isAuthenticated: user !== null,
+    isLoading: isLoading,
+    login: login,
+    signup: signup,
+    logout: logout,
+    refreshUser: refreshUser,
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        isLoading,
-        login,
-        signup,
-        logout,
-        refreshUser,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => {
+// custom hook to use auth context
+export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}
