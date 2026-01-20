@@ -1,27 +1,26 @@
-import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { motion } from 'framer-motion';
-import { Sun, Moon, LogOut, User, Home } from 'lucide-react';
+import { Sun, Moon, LogOut, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+function Layout({ children }) {
   const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleLogout = () => {
+  // handle logout click
+  function handleLogout() {
     logout();
     navigate('/login');
-  };
+  }
 
-  const isAuthPage = ['/login', '/signup', '/'].includes(location.pathname);
+  // check if we're on auth pages
+  const isAuthPage = location.pathname === '/login' || 
+                     location.pathname === '/signup' || 
+                     location.pathname === '/';
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,11 +36,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               whileHover={{ scale: 1.05 }}
               className="text-xl font-bold tracking-tight"
             >
-              SOOO CURA
+              CURADOCS
             </motion.div>
           </Link>
 
           <div className="flex items-center gap-3">
+            {/* Theme toggle button */}
             <Button
               variant="ghost"
               size="icon"
@@ -55,6 +55,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               )}
             </Button>
 
+            {/* Show user info when logged in and not on auth pages */}
             {isAuthenticated && !isAuthPage && (
               <>
                 <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-secondary rounded-full">
@@ -75,6 +76,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </>
             )}
 
+            {/* Show login/signup when not logged in and not on auth pages */}
             {!isAuthenticated && !isAuthPage && (
               <div className="flex items-center gap-2">
                 <Button variant="ghost" asChild>
@@ -93,6 +95,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <main className="pt-16">{children}</main>
     </div>
   );
-};
+}
 
 export default Layout;

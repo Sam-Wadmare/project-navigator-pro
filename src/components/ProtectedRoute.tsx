@@ -1,17 +1,12 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/lib/auth';
 import { motion } from 'framer-motion';
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-  allowedRole?: UserRole;
-}
-
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }) => {
+function ProtectedRoute({ children, allowedRole }) {
   const { user, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
+  // show loading spinner while checking auth
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -27,17 +22,21 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }
     );
   }
 
+  // redirect to login if not authenticated
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  // redirect to correct dashboard if wrong role
   if (allowedRole && user?.role !== allowedRole) {
-    // Redirect to correct dashboard based on role
-    const redirectPath = user?.role === 'doctor' ? '/doctor-dashboard' : '/patient-dashboard';
+    let redirectPath = '/patient-dashboard';
+    if (user?.role === 'doctor') {
+      redirectPath = '/doctor-dashboard';
+    }
     return <Navigate to={redirectPath} replace />;
   }
 
   return <>{children}</>;
-};
+}
 
 export default ProtectedRoute;

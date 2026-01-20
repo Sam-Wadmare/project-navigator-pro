@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import StatCard from '@/components/dashboard/StatCard';
@@ -18,10 +17,10 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const PatientDashboard: React.FC = () => {
+function PatientDashboard() {
   const { user } = useAuth();
 
-  // Mock data for patient dashboard
+  // mock stats data
   const stats = [
     { title: 'Upcoming Appointments', value: 3, icon: Calendar },
     { title: 'Active Prescriptions', value: 2, icon: Heart },
@@ -29,21 +28,24 @@ const PatientDashboard: React.FC = () => {
     { title: 'Days Since Last Visit', value: 12, icon: Clock },
   ];
 
-  const healthMetrics = [
-    { title: 'Blood Pressure', value: '120/80', unit: 'mmHg', icon: Activity, status: 'normal' as const, lastUpdated: '2 hours ago' },
-    { title: 'Heart Rate', value: '72', unit: 'bpm', icon: Heart, status: 'normal' as const, lastUpdated: '2 hours ago' },
-    { title: 'Temperature', value: '98.6', unit: '°F', icon: Thermometer, status: 'normal' as const, lastUpdated: '1 day ago' },
-    { title: 'Blood Sugar', value: '95', unit: 'mg/dL', icon: Droplets, status: 'normal' as const, lastUpdated: '4 hours ago' },
-    { title: 'Weight', value: '165', unit: 'lbs', icon: Weight, status: 'normal' as const, lastUpdated: '3 days ago' },
-    { title: 'Oxygen Level', value: '98', unit: '%', icon: Activity, status: 'normal' as const, lastUpdated: '2 hours ago' },
+  // mock health metrics data
+  const healthMetrics: Array<{title: string; value: string; unit: string; icon: typeof Activity; status: 'normal' | 'warning' | 'critical'; lastUpdated: string}> = [
+    { title: 'Blood Pressure', value: '120/80', unit: 'mmHg', icon: Activity, status: 'normal', lastUpdated: '2 hours ago' },
+    { title: 'Heart Rate', value: '72', unit: 'bpm', icon: Heart, status: 'normal', lastUpdated: '2 hours ago' },
+    { title: 'Temperature', value: '98.6', unit: '°F', icon: Thermometer, status: 'normal', lastUpdated: '1 day ago' },
+    { title: 'Blood Sugar', value: '95', unit: 'mg/dL', icon: Droplets, status: 'normal', lastUpdated: '4 hours ago' },
+    { title: 'Weight', value: '165', unit: 'lbs', icon: Weight, status: 'normal', lastUpdated: '3 days ago' },
+    { title: 'Oxygen Level', value: '98', unit: '%', icon: Activity, status: 'normal', lastUpdated: '2 hours ago' },
   ];
 
-  const upcomingAppointments = [
-    { doctorName: 'Dr. Emily Carter', specialty: 'Cardiologist', time: '10:00 AM', date: 'Jan 20, 2026', type: 'in-person' as const, status: 'upcoming' as const },
-    { doctorName: 'Dr. Robert Smith', specialty: 'General Physician', time: '02:30 PM', date: 'Jan 22, 2026', type: 'video' as const, status: 'upcoming' as const },
-    { doctorName: 'Dr. Lisa Wong', specialty: 'Dermatologist', time: '11:00 AM', date: 'Jan 25, 2026', type: 'in-person' as const, status: 'upcoming' as const },
+  // mock appointments data
+  const upcomingAppointments: Array<{doctorName: string; specialty: string; time: string; date: string; type: 'in-person' | 'video'; status: 'upcoming' | 'completed' | 'cancelled'}> = [
+    { doctorName: 'Dr. Emily Carter', specialty: 'Cardiologist', time: '10:00 AM', date: 'Jan 20, 2026', type: 'in-person', status: 'upcoming' },
+    { doctorName: 'Dr. Robert Smith', specialty: 'General Physician', time: '02:30 PM', date: 'Jan 22, 2026', type: 'video', status: 'upcoming' },
+    { doctorName: 'Dr. Lisa Wong', specialty: 'Dermatologist', time: '11:00 AM', date: 'Jan 25, 2026', type: 'in-person', status: 'upcoming' },
   ];
 
+  // mock medical records data
   const medicalRecords = [
     { title: 'Annual Health Checkup', doctor: 'Robert Smith', date: 'Jan 5, 2026', type: 'Report' },
     { title: 'Blood Test Results', doctor: 'Emily Carter', date: 'Dec 28, 2025', type: 'Lab' },
@@ -51,6 +53,7 @@ const PatientDashboard: React.FC = () => {
     { title: 'Prescription - Vitamins', doctor: 'Robert Smith', date: 'Dec 15, 2025', type: 'Rx' },
   ];
 
+  // animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -58,6 +61,9 @@ const PatientDashboard: React.FC = () => {
       transition: { staggerChildren: 0.1 },
     },
   };
+
+  // get first name from full name
+  const firstName = user?.fullName?.split(' ')[0] || 'Patient';
 
   return (
     <div className="min-h-screen bg-background">
@@ -69,7 +75,7 @@ const PatientDashboard: React.FC = () => {
           className="mb-8"
         >
           <h1 className="text-3xl font-bold mb-2">
-            Welcome back, {user?.fullName?.split(' ')[0]}! 💪
+            Welcome back, {firstName}! 💪
           </h1>
           <p className="text-muted-foreground">
             Here's your health overview and upcoming appointments
@@ -83,9 +89,11 @@ const PatientDashboard: React.FC = () => {
           animate="visible"
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
         >
-          {stats.map((stat, i) => (
-            <StatCard key={stat.title} {...stat} delay={i * 0.1} />
-          ))}
+          {stats.map(function(stat, i) {
+            return (
+              <StatCard key={stat.title} {...stat} delay={i * 0.1} />
+            );
+          })}
         </motion.div>
 
         {/* Health Metrics */}
@@ -103,9 +111,11 @@ const PatientDashboard: React.FC = () => {
             </Button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {healthMetrics.map((metric, i) => (
-              <HealthMetricCard key={metric.title} {...metric} delay={0.5 + i * 0.05} />
-            ))}
+            {healthMetrics.map(function(metric, i) {
+              return (
+                <HealthMetricCard key={metric.title} {...metric} delay={0.5 + i * 0.05} />
+              );
+            })}
           </div>
         </motion.div>
 
@@ -125,9 +135,11 @@ const PatientDashboard: React.FC = () => {
               </Button>
             </div>
             <div className="space-y-3">
-              {upcomingAppointments.map((apt, i) => (
-                <AppointmentCard key={i} {...apt} delay={0.7 + i * 0.1} />
-              ))}
+              {upcomingAppointments.map(function(apt, i) {
+                return (
+                  <AppointmentCard key={i} {...apt} delay={0.7 + i * 0.1} />
+                );
+              })}
             </div>
           </motion.div>
 
@@ -144,9 +156,11 @@ const PatientDashboard: React.FC = () => {
               </Button>
             </div>
             <div className="space-y-3">
-              {medicalRecords.map((record, i) => (
-                <MedicalRecordCard key={i} {...record} delay={0.8 + i * 0.1} />
-              ))}
+              {medicalRecords.map(function(record, i) {
+                return (
+                  <MedicalRecordCard key={i} {...record} delay={0.8 + i * 0.1} />
+                );
+              })}
             </div>
           </motion.div>
         </div>
@@ -168,6 +182,6 @@ const PatientDashboard: React.FC = () => {
       </div>
     </div>
   );
-};
+}
 
 export default PatientDashboard;

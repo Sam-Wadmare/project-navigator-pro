@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Stethoscope, Heart, Shield, Clock } from 'lucide-react';
@@ -6,9 +5,10 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { getRedirectPath } from '@/lib/auth';
 
-const Index: React.FC = () => {
+function Index() {
   const { isAuthenticated, user } = useAuth();
 
+  // features list
   const features = [
     {
       icon: Stethoscope,
@@ -32,6 +32,7 @@ const Index: React.FC = () => {
     },
   ];
 
+  // animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -75,7 +76,7 @@ const Index: React.FC = () => {
                 transition={{ delay: 0.4 }}
                 className="block"
               >
-                SOOO CURA
+                CURADOCS
               </motion.span>
             </h1>
 
@@ -118,7 +119,7 @@ const Index: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Decorative elements */}
+        {/* Decorative element */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.5 }}
@@ -140,7 +141,7 @@ const Index: React.FC = () => {
               Everything you need
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              SOOO CURA provides a complete suite of tools for healthcare management
+              CURADOCS provides a complete suite of tools for healthcare management
             </p>
           </motion.div>
 
@@ -151,20 +152,23 @@ const Index: React.FC = () => {
             viewport={{ once: true }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {features.map((feature, i) => (
-              <motion.div
-                key={feature.title}
-                variants={itemVariants}
-                whileHover={{ y: -5 }}
-                className="p-6 bg-card rounded-2xl border border-border hover:shadow-medium transition-all"
-              >
-                <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center mb-4">
-                  <feature.icon className="h-6 w-6" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
-              </motion.div>
-            ))}
+            {features.map(function(feature) {
+              const IconComponent = feature.icon;
+              return (
+                <motion.div
+                  key={feature.title}
+                  variants={itemVariants}
+                  whileHover={{ y: -5 }}
+                  className="p-6 bg-card rounded-2xl border border-border hover:shadow-medium transition-all"
+                >
+                  <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center mb-4">
+                    <IconComponent className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>
@@ -182,7 +186,7 @@ const Index: React.FC = () => {
               Ready to get started?
             </h2>
             <p className="text-primary-foreground/80 mb-8">
-              Join thousands of healthcare providers and patients who trust SOOO CURA.
+              Join thousands of healthcare providers and patients who trust CURADOCS.
             </p>
             {!isAuthenticated && (
               <Button
@@ -205,15 +209,15 @@ const Index: React.FC = () => {
       <footer className="py-8 border-t border-border">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="text-xl font-bold">SOOO CURA</div>
+            <div className="text-xl font-bold">CURADOCS</div>
             <p className="text-sm text-muted-foreground">
-              © 2026 SOOO CURA. All rights reserved.
+              © 2026 CURADOCS. All rights reserved.
             </p>
           </div>
         </div>
       </footer>
     </div>
   );
-};
+}
 
 export default Index;

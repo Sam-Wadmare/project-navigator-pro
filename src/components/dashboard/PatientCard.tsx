@@ -1,25 +1,8 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { User, Phone, FileText, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-interface PatientCardProps {
-  name: string;
-  age: number;
-  phone: string;
-  lastVisit: string;
-  condition: string;
-  delay?: number;
-}
-
-const PatientCard: React.FC<PatientCardProps> = ({
-  name,
-  age,
-  phone,
-  lastVisit,
-  condition,
-  delay = 0,
-}) => {
+function PatientCard({ name, age, phone, lastVisit, condition, delay = 0 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -38,30 +21,18 @@ const PatientCard: React.FC<PatientCardProps> = ({
             <p className="text-sm text-muted-foreground">{age} years old</p>
           </div>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-full">
-          <MoreHorizontal className="h-5 w-5" />
-        </Button>
+        <Button variant="ghost" size="icon" className="rounded-full"><MoreHorizontal className="h-5 w-5" /></Button>
       </div>
-
       <div className="space-y-2 mb-4">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Phone className="h-4 w-4" />
-          <span>{phone}</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <FileText className="h-4 w-4" />
-          <span>{condition}</span>
-        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground"><Phone className="h-4 w-4" /><span>{phone}</span></div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground"><FileText className="h-4 w-4" /><span>{condition}</span></div>
       </div>
-
       <div className="flex items-center justify-between pt-4 border-t border-border">
         <span className="text-xs text-muted-foreground">Last visit: {lastVisit}</span>
-        <Button variant="secondary" size="sm" className="text-xs">
-          View Profile
-        </Button>
+        <Button variant="secondary" size="sm" className="text-xs">View Profile</Button>
       </div>
     </motion.div>
   );
-};
+}
 
 export default PatientCard;

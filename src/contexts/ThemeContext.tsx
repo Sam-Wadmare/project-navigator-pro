@@ -1,42 +1,51 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
-type Theme = 'light' | 'dark';
+// create context for theme
+const ThemeContext = createContext(undefined);
 
-interface ThemeContextType {
-  theme: Theme;
-  toggleTheme: () => void;
-}
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('sooo_cura_theme');
-    return (saved as Theme) || 'light';
+// theme provider component
+export function ThemeProvider({ children }) {
+  // get saved theme or default to light
+  const [theme, setTheme] = useState(function() {
+    const saved = localStorage.getItem('curadocs_theme');
+    return saved || 'light';
   });
 
-  useEffect(() => {
+  // update document class when theme changes
+  useEffect(function() {
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
     root.classList.add(theme);
-    localStorage.setItem('sooo_cura_theme', theme);
+    localStorage.setItem('curadocs_theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  // toggle between light and dark
+  function toggleTheme() {
+    setTheme(function(prev) {
+      if (prev === 'light') {
+        return 'dark';
+      }
+      return 'light';
+    });
+  }
+
+  const value = {
+    theme: theme,
+    toggleTheme: toggleTheme,
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
-};
+}
 
-export const useTheme = () => {
+// custom hook to use theme context
+export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
-};
+}
