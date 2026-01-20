@@ -27,17 +27,17 @@ function DoctorDashboard() {
 
   // mock appointments data
   const todayAppointments: Array<{patientName: string; time: string; date: string; type: 'in-person' | 'video'; status: 'upcoming' | 'completed' | 'cancelled'}> = [
-    { patientName: 'Sarah Johnson', time: '09:00 AM', date: 'Today', type: 'in-person', status: 'upcoming' },
-    { patientName: 'Michael Chen', time: '10:30 AM', date: 'Today', type: 'video', status: 'upcoming' },
-    { patientName: 'Emma Williams', time: '11:45 AM', date: 'Today', type: 'in-person', status: 'upcoming' },
-    { patientName: 'James Brown', time: '02:00 PM', date: 'Today', type: 'video', status: 'upcoming' },
+    { patientName: 'Sara jain', time: '09:00 AM', date: 'Today', type: 'in-person', status: 'upcoming' },
+    { patientName: 'Mahesh chavan', time: '10:30 AM', date: 'Today', type: 'video', status: 'upcoming' },
+    { patientName: 'Esha gavit', time: '11:45 AM', date: 'Today', type: 'in-person', status: 'upcoming' },
+    { patientName: 'Jay pardesi', time: '02:00 PM', date: 'Today', type: 'video', status: 'upcoming' },
   ];
 
   // mock patients data
   const recentPatients = [
-    { name: 'Sarah Johnson', age: 34, phone: '+1 234 567 8901', lastVisit: 'Jan 15, 2026', condition: 'Hypertension' },
-    { name: 'Michael Chen', age: 45, phone: '+1 234 567 8902', lastVisit: 'Jan 14, 2026', condition: 'Diabetes Type 2' },
-    { name: 'Emma Williams', age: 28, phone: '+1 234 567 8903', lastVisit: 'Jan 12, 2026', condition: 'Allergies' },
+    { name: 'Sara jain', age: 34, phone: '+1 234 567 8901', lastVisit: 'Jan 15, 2026', condition: 'Hypertension' },
+    { name: 'Mahesh Chavan', age: 45, phone: '+1 234 567 8902', lastVisit: 'Jan 14, 2026', condition: 'Diabetes Type 2' },
+    { name: 'Esha gavit', age: 28, phone: '+1 234 567 8903', lastVisit: 'Jan 12, 2026', condition: 'Allergies' },
   ];
 
   // quick actions
